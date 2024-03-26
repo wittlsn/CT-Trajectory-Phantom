@@ -22,12 +22,14 @@ def main():
     artist = API()
     artist.clear_scene()
     artist.load_project(SCENE_PATH)
+    artist.load_part(SCENE_PATH.parent / 'Dragon.stl', 'Al', 'Balerion')
     
     # Load meshes into scene
     with open(str(MESEHES_DICT_PATH), 'r') as f:
         data_dict = json.load(f)
 
     artist.load_part(Path(data_dict['hull']['path']), 'PE (HDPE)')
+    artist.load_part(Path(data_dict['sample_holder']['path']), 'W')
     for hexagon_dict in data_dict['hexagon_poses']:
         position = np.array(hexagon_dict['matrix'])[:3, 3]
         z_position = position[2]
@@ -36,7 +38,7 @@ def main():
 
     # generate
     source_positions, detector_positions, orientation = sphere_trajectory(FOD_MM, FDD_MM, NUMBER_OF_PROJECTIONS)
-    for i in range(NUMBER_OF_PROJECTIONS):
+    for i in range(100, NUMBER_OF_PROJECTIONS-100):
         artist.translate('S', *source_positions[i])
         artist.translate('D', *detector_positions[i])
         artist.rotate_from_rotation_matrix('S', orientation[i])
